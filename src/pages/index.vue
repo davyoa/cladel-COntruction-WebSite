@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useElementBounding, useEventListener, useWindowScroll } from '@vueuse/core'
+import { ref, computed, onUnmounted } from 'vue'
+import { useWindowScroll } from '@vueuse/core'
 import {
-  ChevronsUpDown,
   Tag,
   KeyRound,
   CreditCard,
@@ -12,88 +11,73 @@ import {
   ArrowRight as ArrowForward,
   MapPin,
   Mail,
-  Phone
 } from '@lucide/vue'
 
 // Nav scroll behavior
 const { y: scrollY } = useWindowScroll()
 
-// Comparison Slider Logic
-const slider = ref<HTMLElement | null>(null)
-const isDragging = ref(false)
-const position = ref(40)
-const showTooltip = ref(false)
+const hero = ref<HTMLElement | null>(null)
+const currentX = ref(100)
+const currentY = ref(50)
+const targetX = ref(100)
+const targetY = ref(50)
+const animationFrame = ref<number | null>(null)
 
-const { left, width } = useElementBounding(slider)
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
-// Scroll animations
-let intersectionObserver: IntersectionObserver
+const animateScene = () => {
+  currentX.value += (targetX.value - currentX.value) * 0.08
+  currentY.value += (targetY.value - currentY.value) * 0.08
 
-// Tooltip interaction
-onMounted(() => {
-  // Setup intersection observer for scroll animations
-  intersectionObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view')
-      }
-    })
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  })
+  if (Math.abs(targetX.value - currentX.value) > 0.15 || Math.abs(targetY.value - currentY.value) > 0.15) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  } else {
+    currentX.value = targetX.value
+    currentY.value = targetY.value
+    animationFrame.value = null
+  }
+}
 
-  // Observe all fade-in-on-scroll elements
-  document.querySelectorAll('.fade-in-on-scroll').forEach((el) => {
-    intersectionObserver.observe(el)
-  })
+const setPointer = (clientX: number, clientY: number) => {
+  if (!hero.value) return
+  const rect = hero.value.getBoundingClientRect()
+  targetX.value = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100)
+  targetY.value = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100)
+  if (animationFrame.value === null) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  }
+}
 
-  setTimeout(() => {
-    showTooltip.value = true
-    setTimeout(() => {
-      showTooltip.value = false
-    }, 3500)
-  }, 1200)
-})
+const handlePointerMove = (event: MouseEvent) => {
+  setPointer(event.clientX, event.clientY)
+}
+
+const handlePointerLeave = () => {
+  targetX.value = 100
+  targetY.value = 50
+  if (animationFrame.value === null) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  }
+}
+
+const sceneStyle = computed(() => ({
+  transform: `perspective(1400px) rotateY(${(currentX.value - 50) * 0.11}deg) rotateX(${(50 - currentY.value) * 0.07}deg)`,
+}))
+
+const beforeMaskStyle = computed(() => ({
+  clipPath: `polygon(0 0, ${currentX.value}% 0, ${currentX.value}% 100%, 0 100%)`,
+}))
+
+const revealStyle = computed(() => ({
+  left: `${currentX.value}%`,
+  transform: 'translateX(-50%)',
+}))
 
 onUnmounted(() => {
-  if (intersectionObserver) {
-    intersectionObserver.disconnect()
+  if (animationFrame.value !== null) {
+    window.cancelAnimationFrame(animationFrame.value)
   }
 })
-
-const updatePosition = (clientX: number) => {
-  if (width.value === 0) return
-  let pct = ((clientX - left.value) / width.value) * 100
-  pct = Math.max(0, Math.min(pct, 100))
-  position.value = pct
-  
-  if (showTooltip.value) {
-    showTooltip.value = false
-  }
-}
-
-const handleStart = (e: MouseEvent | TouchEvent) => {
-  isDragging.value = true
-  const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-  updatePosition(clientX)
-}
-
-const handleMove = (e: MouseEvent | TouchEvent) => {
-  if (!isDragging.value) return
-  const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-  updatePosition(clientX)
-}
-
-const handleEnd = () => {
-  isDragging.value = false
-}
-
-// Listen to move and end on window
-useEventListener(window, 'mousemove', handleMove)
-useEventListener(window, 'mouseup', handleEnd)
-useEventListener(window, 'touchmove', handleMove, { passive: false })
-useEventListener(window, 'touchend', handleEnd)
 </script>
 
 <template>
@@ -121,84 +105,64 @@ useEventListener(window, 'touchend', handleEnd)
 
     <main>
       <!-- HERO SECTION -->
-      <section class="relative min-h-screen pt-[120px] pb-xl flex flex-col items-center justify-start overflow-hidden px-margin-desktop text-center bg-black">
-        <!-- Interactive Comparison Slider -->
-        <div class="w-full max-w-5xl relative z-20 mb-xl fade-in-on-scroll">
-          <div class="relative w-full group">
-            <!-- Tooltip -->
+      <section
+        ref="hero"
+        @mousemove="handlePointerMove"
+        @mouseleave="handlePointerLeave"
+        class="relative min-h-[110vh] pt-[90px] pb-lg flex flex-col items-center justify-start overflow-hidden px-margin-desktop text-center bg-black"
+      >
+        <!-- Hero Content -->
+        <div class="max-w-5xl z-10 fade-in-on-scroll" style="animation-delay: 0.2s">
+          <h2 class="font-headline-xl text-[clamp(2.75rem,6vw,4.5rem)] text-white mb-md uppercase leading-tight tracking-tighter animate-fade-in-up">
+            Your building and construction experts
+          </h2>
+          <h5 class="font-headline-lg text-primary-container mb-xl tracking-[0.18em] uppercase animate-fade-in-up" style="animation-delay: 0.1s">
+            in Ghana
+          </h5>
+        </div>
+
+        <div class="w-full max-w-6xl relative z-20 mb-lg fade-in-on-scroll">
+          <div class="relative w-full group overflow-hidden rounded-[32px] shadow-[0_24px_120px_rgba(0,0,0,0.45)]">
             <div
-              class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[120%] z-40 bg-primary-container text-white px-md py-xs font-label-caps uppercase text-[10px] tracking-widest transition-opacity duration-700 pointer-events-none"
-              :class="showTooltip ? 'opacity-100' : 'opacity-0'"
-              id="slider-tooltip"
+              class="relative overflow-hidden rounded-[32px] bg-black/60 aspect-[1.9/1]"
+              :style="sceneStyle"
             >
-              Drag to compare
-            </div>
-            <div
-              ref="slider"
-              class="comparison-container relative aspect-[1.79/1] w-full overflow-hidden rounded-lg"
-              id="comparison-slider"
-            >
-              <!-- After Image (Base) -->
               <img
                 alt="Completed building"
-                class="absolute inset-0 w-full h-full object-contain"
+                class="absolute inset-0 w-full h-full object-scale-down"
                 src="/hero_building_(2).png"
               />
-              <!-- Before Image (Clipped) -->
+
               <div
-                class="absolute inset-0 z-10 overflow-hidden"
-                :style="{ width: `${position}%` }"
-                id="before-image-wrapper"
+                class="absolute inset-0 overflow-hidden"
+                :style="beforeMaskStyle"
               >
                 <img
-                  alt="Under construction"
-                  class="absolute inset-0 w-[100vw] max-w-none h-full object-contain"
-                  :style="{ width: `${width}px` }"
+                  alt="Unfinished building"
+                  class="absolute inset-0 w-full h-full object-scale-down"
                   src="/hero_building_(1).png"
                 />
               </div>
-              <!-- Slider Handle -->
+
               <div
-                class="slider-handle absolute top-0 bottom-0 w-[2px] bg-primary-container z-40 flex items-center justify-center"
-                :style="{ left: `${position}%` }"
-                id="slider-drag"
-                @mousedown="handleStart"
-                @touchstart.prevent="handleStart"
+                class="absolute top-0 left-0 right-0 bottom-0 pointer-events-none"
+                :style="revealStyle"
               >
-                <!-- Drag Grip -->
-                <div class="absolute w-12 h-12 bg-primary-container rounded-full border-[6px] border-black shadow-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <ChevronsUpDown class="text-white w-5 h-5" />
-                </div>
+                <div class="absolute top-0 left-1/2 h-full w-[2px] -translate-x-1/2 bg-red-500/70 shadow-[0_0_24px_rgba(214,40,40,0.6)] blur-sm" />
+                <div class="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/55 shadow-[0_0_20px_rgba(214,40,40,0.55)]" />
               </div>
-              <!-- Labels -->
-              <div class="absolute bottom-md left-md z-30 font-label-caps text-[10px] text-white/40 tracking-[0.2em] pointer-events-none uppercase">Foundation</div>
-              <div class="absolute bottom-md right-md z-30 font-label-caps text-[10px] text-white/40 tracking-[0.2em] pointer-events-none uppercase">Completion</div>
             </div>
           </div>
         </div>
-        <!-- Hero Content -->
-        <div class="max-w-4xl z-10 fade-in-on-scroll" style="animation-delay: 0.2s">
-          <h2 class="font-headline-lg text-white mb-sm uppercase leading-tight tracking-tighter animate-fade-in-up">
-            FROM FOUNDATION<br/>
-            <span class="text-primary-container">TO COMPLETION</span>
-          </h2>
-          <h5 class="font-headline-md text-primary-container mb-lg tracking-[0.1em] uppercase animate-fade-in-up" style="animation-delay: 0.1s">
-            Experience the Cladale Difference
-          </h5>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-md">
-            <button class="bg-primary-container text-white px-xl py-md font-label-caps uppercase tracking-widest hover:brightness-110 transition-all duration-300 w-full sm:w-auto hover:shadow-lg">
-              Explore Our Offers
-            </button>
-            <div class="flex items-center gap-sm justify-center border border-white/20 px-lg py-md w-full sm:w-auto hover:border-primary-container transition-all duration-300">
-              <Phone class="text-primary-container w-5 h-5" />
-              <span class="font-data-mono text-white">AK-846-2803, KUMASI</span>
-            </div>
-          </div>
+
+        <div class="w-full max-w-4xl mx-auto mb-10 px-4 py-3 rounded-full bg-surface-container/80 border border-white/10 text-white/80 text-sm tracking-[0.2em] uppercase shadow-lg backdrop-blur-xl">
+          <span class="font-label-caps text-primary-container mr-2">Location: </span>
+          AK-846-2803, Kumasi, Ghana 00233
         </div>
       </section>
 
       <!-- ABOUT SECTION -->
-      <section class="py-xl px-margin-desktop border-t border-white/10 bg-black fade-in-on-scroll" id="about">
+      <section class="py-lg px-margin-desktop border-t border-white/10 bg-black fade-in-on-scroll" id="about">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
           <div class="lg:col-span-4">
             <h2 class="font-label-caps text-primary-container mb-sm animate-slide-in-left">CLADALE OVERVIEW</h2>
