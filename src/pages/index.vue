@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
 import {
   Tag,
@@ -17,11 +17,18 @@ import {
 const { y: scrollY } = useWindowScroll()
 
 const hero = ref<HTMLElement | null>(null)
-const currentX = ref(100)
+const currentX = ref(0)
 const currentY = ref(50)
-const targetX = ref(100)
+const targetX = ref(0)
 const targetY = ref(50)
 const animationFrame = ref<number | null>(null)
+const slideIndex = ref(0)
+const slideInterval = ref<number | null>(null)
+const observerRef = ref<IntersectionObserver | null>(null)
+const slides = [
+  '/house 1.jpeg',
+  '/ialicante-mediterranean-homes-475777-unsplash.jpg.jpeg'
+]
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
@@ -53,7 +60,7 @@ const handlePointerMove = (event: MouseEvent) => {
 }
 
 const handlePointerLeave = () => {
-  targetX.value = 100
+  targetX.value = 0
   targetY.value = 50
   if (animationFrame.value === null) {
     animationFrame.value = window.requestAnimationFrame(animateScene)
@@ -62,6 +69,16 @@ const handlePointerLeave = () => {
 
 const sceneStyle = computed(() => ({
   transform: `perspective(1400px) rotateY(${(currentX.value - 50) * 0.11}deg) rotateX(${(50 - currentY.value) * 0.07}deg)`,
+}))
+
+const heroBackgroundStyle = computed(() => ({
+  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.42) 25%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.88) 100%), url(${slides[slideIndex.value]})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundColor: '#0b0b0b',
+  filter: 'brightness(0.64) contrast(1.08)',
+  transition: 'background-image 1s ease-in-out, filter 1s ease-in-out',
 }))
 
 const beforeMaskStyle = computed(() => ({
@@ -73,10 +90,46 @@ const revealStyle = computed(() => ({
   transform: 'translateX(-50%)',
 }))
 
+const startSlideShow = () => {
+  if (slideInterval.value !== null) return
+  slideInterval.value = window.setInterval(() => {
+    slideIndex.value = (slideIndex.value + 1) % slides.length
+  }, 6500)
+}
+
+const stopSlideShow = () => {
+  if (slideInterval.value !== null) {
+    window.clearInterval(slideInterval.value)
+    slideInterval.value = null
+  }
+}
+
+onMounted(() => {
+  startSlideShow()
+
+  // basic scroll reveal observer for `.fade-in-on-scroll` elements
+  observerRef.value = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const el = entry.target as HTMLElement
+      if (entry.isIntersecting) {
+        el.classList.add('in-view')
+      } else {
+        el.classList.remove('in-view')
+      }
+    })
+  }, { threshold: 0.12 })
+
+  document.querySelectorAll('.fade-in-on-scroll').forEach((el) => {
+    observerRef.value?.observe(el)
+  })
+})
+
 onUnmounted(() => {
   if (animationFrame.value !== null) {
     window.cancelAnimationFrame(animationFrame.value)
   }
+  stopSlideShow()
+  if (observerRef.value) observerRef.value.disconnect()
 })
 </script>
 
@@ -92,7 +145,7 @@ onUnmounted(() => {
         <span class="font-headline-md text-headline-md font-black text-on-surface tracking-tighter">CLADALE</span>
       </div>
       <div class="hidden md:flex gap-lg items-center">
-        <a class="nav-link text-primary-container font-bold border-b-2 border-primary-container pb-1" href="#">Home</a>
+        <a class="nav-link text-on-surface" href="#">Home</a>
         <a class="nav-link text-on-surface" href="#services">Services</a>
         <a class="nav-link text-on-surface" href="#offers">Projects</a>
         <a class="nav-link text-on-surface" href="#about">About</a>
@@ -108,9 +161,11 @@ onUnmounted(() => {
       <section
         ref="hero"
         @mousemove="handlePointerMove"
-        @mouseleave="handlePointerLeave"
+        @mouseenter="stopSlideShow"
+        @mouseleave="() => { handlePointerLeave(); startSlideShow() }"
         class="relative min-h-[110vh] pt-[90px] pb-lg flex flex-col items-center justify-start overflow-hidden px-margin-desktop text-center bg-black"
       >
+        <div class="absolute inset-0 z-0" :style="heroBackgroundStyle"></div>
         <!-- Hero Content -->
         <div class="max-w-5xl z-10 fade-in-on-scroll" style="animation-delay: 0.2s">
           <h2 class="font-headline-xl text-[clamp(2.75rem,6vw,4.5rem)] text-white mb-md uppercase leading-tight tracking-tighter animate-fade-in-up">
@@ -121,10 +176,9 @@ onUnmounted(() => {
           </h5>
         </div>
 
-        <div class="w-full max-w-6xl relative z-20 mb-lg fade-in-on-scroll">
-          <div class="relative w-full group overflow-hidden rounded-[32px] shadow-[0_24px_120px_rgba(0,0,0,0.45)]">
+        <div class="w-full max-w-2xl relative z-20 mb-lg fade-in-on-scroll">
             <div
-              class="relative overflow-hidden rounded-[32px] bg-black/60 aspect-[1.9/1]"
+              class="relative overflow-hidden rounded-[32px] aspect-[1.9/1]"
               :style="sceneStyle"
             >
               <img
@@ -152,7 +206,6 @@ onUnmounted(() => {
                 <div class="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/55 shadow-[0_0_20px_rgba(214,40,40,0.55)]" />
               </div>
             </div>
-          </div>
         </div>
 
         <div class="w-full max-w-4xl mx-auto mb-10 px-4 py-3 rounded-full bg-surface-container/80 border border-white/10 text-white/80 text-sm tracking-[0.2em] uppercase shadow-lg backdrop-blur-xl">
@@ -239,7 +292,7 @@ onUnmounted(() => {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
           <!-- Project Card 1 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll hover:shadow-2xl" style="animation-delay: 0s">
+          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-left hover:shadow-2xl" style="animation-delay: 0s">
             <div class="aspect-video relative overflow-hidden">
               <img alt="Modern Residential" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLsPPg5V49h1rfbslsI6xFUvG816f5zNP0zJfR2xujzoKRO1u0gSQIyrnSOByIspEyVcSD9xuFhUUQTTOVdr_xcmka2Yi8YMh5EFxBXNQVqjYtwsQtchGGCU3PhyAxdrEIl6IlR57gPP_W2SF2uxVdhz4ir7hYUUJh21l1FICcfnQ24Kx0gD8KwXPa_BijcsDSi8kKcMQ5gC-GxeXufBCZUGtT1BnsWlwFgzFI8UiQjwZ_E6YLtLjGgeLdc"/>
               <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
@@ -253,7 +306,7 @@ onUnmounted(() => {
             </div>
           </article>
           <!-- Project Card 2 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll hover:shadow-2xl" style="animation-delay: 0.1s">
+          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-right hover:shadow-2xl" style="animation-delay: 0.1s">
             <div class="aspect-video relative overflow-hidden">
               <img alt="Luxury Estate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLubstAXz8ugVAGDauRrgRWzW4zht5L2cibYsHH57P_KPW9gUYrOvE99R9p9mEIGmNXcGfoXlk3SN0LWbD9xqIB5IkiLk8mfITGSth6bYJU3EGUc4dRIIvnTjBMadGuyU2Kp9jYEN0W9OChBooynn386ye8HMigouUl_SWsb4dJSEJwrclvy3v0e_iZaq0kM0C1VVJr99QPVHK7SHuGuy4XD3Xhn06Yy9fBou3M597fyUBAslY_ErEN9Ot1R"/>
               <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">LEASED</div>
@@ -267,7 +320,7 @@ onUnmounted(() => {
             </div>
           </article>
           <!-- Project Card 3 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll hover:shadow-2xl" style="animation-delay: 0.2s">
+          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-left hover:shadow-2xl" style="animation-delay: 0.2s">
             <div class="aspect-video relative overflow-hidden">
               <img alt="Coastal Villa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLuzbEcJa_qZHQnoUuuVcmZ9UCxxhCwe53y4QG6XNnHePzSsif33KFG9wXIlUvQvVVsh5eeJFGWaK_k4o3zI7_SFOxMil75SjU2JYvVms_SSbQUs9QXqtYVPPSEZwDrQpIVL4Gyh0Jo0usUCaMkBQt75KF9DHZvtA9mt-WhabsV7a2U8M2ne8EbcYzuaMnVyh-Y890LyH5T07OKf2ZWcIrp3Qluvh31UIkKBz9Y_nuAdgWN31JAQ1ANjDFw"/>
               <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
