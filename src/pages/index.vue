@@ -1,138 +1,3 @@
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useWindowScroll } from '@vueuse/core'
-import {
-  Tag,
-  KeyRound,
-  CreditCard,
-  BarChart3,
-  ArrowLeft,
-  ArrowRight,
-  ArrowRight as ArrowForward,
-  MapPin,
-  Mail,
-} from '@lucide/vue'
-
-// Nav scroll behavior
-const { y: scrollY } = useWindowScroll()
-
-const hero = ref<HTMLElement | null>(null)
-const currentX = ref(0)
-const currentY = ref(50)
-const targetX = ref(0)
-const targetY = ref(50)
-const animationFrame = ref<number | null>(null)
-const slideIndex = ref(0)
-const slideInterval = ref<number | null>(null)
-const observerRef = ref<IntersectionObserver | null>(null)
-const slides = [
-  '/house 1.jpeg',
-  '/ialicante-mediterranean-homes-475777-unsplash.jpg.jpeg'
-]
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
-
-const animateScene = () => {
-  currentX.value += (targetX.value - currentX.value) * 0.08
-  currentY.value += (targetY.value - currentY.value) * 0.08
-
-  if (Math.abs(targetX.value - currentX.value) > 0.15 || Math.abs(targetY.value - currentY.value) > 0.15) {
-    animationFrame.value = window.requestAnimationFrame(animateScene)
-  } else {
-    currentX.value = targetX.value
-    currentY.value = targetY.value
-    animationFrame.value = null
-  }
-}
-
-const setPointer = (clientX: number, clientY: number) => {
-  if (!hero.value) return
-  const rect = hero.value.getBoundingClientRect()
-  targetX.value = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100)
-  targetY.value = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100)
-  if (animationFrame.value === null) {
-    animationFrame.value = window.requestAnimationFrame(animateScene)
-  }
-}
-
-const handlePointerMove = (event: MouseEvent) => {
-  setPointer(event.clientX, event.clientY)
-}
-
-const handlePointerLeave = () => {
-  targetX.value = 0
-  targetY.value = 50
-  if (animationFrame.value === null) {
-    animationFrame.value = window.requestAnimationFrame(animateScene)
-  }
-}
-
-const sceneStyle = computed(() => ({
-  transform: `perspective(1400px) rotateY(${(currentX.value - 50) * 0.11}deg) rotateX(${(50 - currentY.value) * 0.07}deg)`,
-}))
-
-const heroBackgroundStyle = computed(() => ({
-  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.42) 25%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.88) 100%), url(${slides[slideIndex.value]})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  backgroundColor: '#0b0b0b',
-  filter: 'brightness(0.64) contrast(1.08)',
-  transition: 'background-image 1s ease-in-out, filter 1s ease-in-out',
-}))
-
-const beforeMaskStyle = computed(() => ({
-  clipPath: `polygon(0 0, ${currentX.value}% 0, ${currentX.value}% 100%, 0 100%)`,
-}))
-
-const revealStyle = computed(() => ({
-  left: `${currentX.value}%`,
-  transform: 'translateX(-50%)',
-}))
-
-const startSlideShow = () => {
-  if (slideInterval.value !== null) return
-  slideInterval.value = window.setInterval(() => {
-    slideIndex.value = (slideIndex.value + 1) % slides.length
-  }, 6500)
-}
-
-const stopSlideShow = () => {
-  if (slideInterval.value !== null) {
-    window.clearInterval(slideInterval.value)
-    slideInterval.value = null
-  }
-}
-
-onMounted(() => {
-  startSlideShow()
-
-  // basic scroll reveal observer for `.fade-in-on-scroll` elements
-  observerRef.value = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const el = entry.target as HTMLElement
-      if (entry.isIntersecting) {
-        el.classList.add('in-view')
-      } else {
-        el.classList.remove('in-view')
-      }
-    })
-  }, { threshold: 0.12 })
-
-  document.querySelectorAll('.fade-in-on-scroll').forEach((el) => {
-    observerRef.value?.observe(el)
-  })
-})
-
-onUnmounted(() => {
-  if (animationFrame.value !== null) {
-    window.cancelAnimationFrame(animationFrame.value)
-  }
-  stopSlideShow()
-  if (observerRef.value) observerRef.value.disconnect()
-})
-</script>
-
 <template>
   <div class="font-body-md text-on-surface bg-black min-h-screen">
     <!-- NAVIGATION SHELL -->
@@ -142,7 +7,7 @@ onUnmounted(() => {
       :class="scrollY > 50 ? 'bg-black/90 backdrop-blur-sm py-sm' : 'bg-transparent py-md'"
     >
       <div class="flex items-center gap-base">
-        <span class="font-headline-md text-headline-md font-black text-on-surface tracking-tighter">CLADALE</span>
+        <span class="font-headline-md text-headline-md font-black text-on-surface tracking-tighter">{{ brandName }}</span>
       </div>
       <div class="hidden md:flex gap-lg items-center">
         <a class="nav-link text-on-surface" href="#">Home</a>
@@ -218,12 +83,12 @@ onUnmounted(() => {
       <section class="py-lg px-margin-desktop border-t border-white/10 bg-black fade-in-on-scroll" id="about">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
           <div class="lg:col-span-4">
-            <h2 class="font-label-caps text-primary-container mb-sm animate-slide-in-left">CLADALE OVERVIEW</h2>
+            <h2 class="font-label-caps text-primary-container mb-sm animate-slide-in-left">{{ brandName }} OVERVIEW</h2>
             <h3 class="font-headline-lg text-white uppercase mb-md animate-slide-in-left" style="animation-delay: 0.1s">BUILDING GHANA'S FUTURE</h3>
           </div>
           <div class="lg:col-span-8 border-l border-white/10 pl-lg">
             <p class="font-body-lg text-on-secondary-container mb-md leading-relaxed fade-in-on-scroll">
-              Cladale Industrial stands at the forefront of the construction sector in Ghana. We bridge the gap between traditional reliability and modern technical mastery. We focus on structural integrity, precision engineering, and the unapologetic pursuit of industrial excellence.
+              {{ brandNameLong }} stands at the forefront of the construction sector in Ghana. We bridge the gap between traditional reliability and modern technical mastery. We focus on structural integrity, precision engineering, and the unapologetic pursuit of industrial excellence.
             </p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-sm mt-lg">
               <div class="bg-surface-container p-md border border-white/5 fade-in-on-scroll hover:border-primary-container transition-all duration-300 cursor-pointer" style="animation-delay: 0s">
@@ -247,33 +112,204 @@ onUnmounted(() => {
         </div>
       </section>
 
+  
       <!-- SERVICES -->
-      <section class="py-xl px-margin-desktop bg-surface-dim fade-in-on-scroll" id="services">
-        <div class="mb-lg">
-          <h2 class="font-label-caps text-primary-container mb-xs animate-slide-in-left">CORE CAPABILITIES</h2>
-          <h3 class="font-headline-lg text-white uppercase animate-slide-in-left" style="animation-delay: 0.1s">INDUSTRIAL SERVICES</h3>
+      <section
+        id="services"
+        class="relative py-32 px-6 lg:px-16 bg-black"
+      >
+        <!-- SECTION HEADER -->
+        <div class="max-w-7xl mx-auto mb-24">
+
+          <p
+            class="text-red-500 uppercase tracking-[0.3em] text-sm font-semibold mb-4"
+          >
+            OUR EXPERTISE
+          </p>
+
+          <h2
+            class="font-headline-xl text-[clamp(2.75rem,6vw,4.5rem)] font-black uppercase text-white leading-tight"
+          >
+            Integrated
+            <span class="text-red-500">
+              Property Solutions
+            </span>
+          </h2>
+
+          <p
+            class="mt-6 max-w-3xl text-lg text-gray-400 leading-relaxed"
+          >
+            From financing and investment guidance to
+            independent property evaluation, we provide
+            the expertise needed to make confident
+            real-estate decisions.
+          </p>
+
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
-          <div class="group bg-surface-container border border-white/10 p-lg hover:border-primary-container transition-all duration-300 industrial-shadow fade-in-on-scroll hover:shadow-lg" style="animation-delay: 0s">
-            <Tag class="w-9 h-9 text-primary-container mb-md transition-transform group-hover:scale-110" />
-            <h4 class="font-headline-md text-white uppercase mb-sm">SELLING</h4>
-            <p class="font-body-md text-on-secondary-container">Technical procurement and asset liquidation for heavy-duty construction equipment.</p>
+
+        <!-- FINANCE -->
+        <div
+          id="finance"
+          class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center mb-40"
+        >
+
+          <!-- IMAGE -->
+          <div class="relative group">
+
+            <div
+              class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"
+            ></div>
+
+            <img
+              src="/finance-keys.png"
+              alt="Finance"
+              class="relative w-full h-[550px] object-cover rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02]"
+            />
+
           </div>
-          <div class="group bg-surface-container border border-white/10 p-lg hover:border-primary-container transition-all duration-300 industrial-shadow fade-in-on-scroll hover:shadow-lg" style="animation-delay: 0.1s">
-            <KeyRound class="w-9 h-9 text-primary-container mb-md transition-transform group-hover:scale-110" />
-            <h4 class="font-headline-md text-white uppercase mb-sm">RENTING</h4>
-            <p class="font-body-md text-on-secondary-container">Flexible leasing solutions for high-performance machinery across Ghana.</p>
+
+          <!-- CONTENT -->
+          <div>
+
+            <span
+              class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold"
+            >
+              FINANCIAL SERVICES
+            </span>
+
+            <h3
+              class="mt-4 font-headline-lg text-[clamp(2rem,4vw,3.5rem)] font-black uppercase text-white leading-tight"
+            >
+              Financing Built
+              <br />
+              Around Your Vision
+            </h3>
+
+            <p
+              class="mt-8 text-lg text-gray-400 leading-relaxed"
+            >
+              Whether you're purchasing your first property,
+              expanding your investment portfolio, or funding
+              a large-scale development, we help structure
+              financing solutions that support long-term
+              success.
+            </p>
+
+            <div class="mt-10 space-y-6">
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">01</span>
+                <p class="text-gray-300">
+                  Flexible Funding Structures
+                </p>
+              </div>
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">02</span>
+                <p class="text-gray-300">
+                  Access To Trusted Financial Partners
+                </p>
+              </div>
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">03</span>
+                <p class="text-gray-300">
+                  Guidance From Application To Approval
+                </p>
+              </div>
+
+            </div>
+
+            <button
+              class="mt-10 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all duration-300"
+            >
+              Explore Financing
+            </button>
+
           </div>
-          <div class="group bg-surface-container border border-white/10 p-lg hover:border-primary-container transition-all duration-300 industrial-shadow fade-in-on-scroll hover:shadow-lg" style="animation-delay: 0.2s">
-            <CreditCard class="w-9 h-9 text-primary-container mb-md transition-transform group-hover:scale-110" />
-            <h4 class="font-headline-md text-white uppercase mb-sm">FINANCES</h4>
-            <p class="font-body-md text-on-secondary-container">Strategic capital management and project funding for large-scale developments.</p>
+        </div>
+
+        <!-- RATING -->
+        <div
+          id="rating"
+          class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center"
+        >
+
+          <!-- CONTENT -->
+          <div>
+
+            <span
+              class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold"
+            >
+              PROPERTY EVALUATION
+            </span>
+
+            <h3
+              class="mt-4 font-headline-lg text-[clamp(2rem,4vw,3.5rem)] font-black uppercase text-white leading-tight"
+            >
+              Independent
+              <br />
+              Assessments You Can Trust
+            </h3>
+
+            <p
+              class="mt-8 text-lg text-gray-400 leading-relaxed"
+            >
+              Our evaluation services provide clear insights
+              into property value, structural integrity, and
+              investment potential. We help buyers,
+              investors, and institutions make informed
+              decisions with confidence.
+            </p>
+
+            <div class="mt-10 space-y-6">
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">01</span>
+                <p class="text-gray-300">
+                  Property Valuation Reports
+                </p>
+              </div>
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">02</span>
+                <p class="text-gray-300">
+                  Structural Integrity Assessments
+                </p>
+              </div>
+
+              <div class="flex gap-5">
+                <span class="text-red-500 font-black">03</span>
+                <p class="text-gray-300">
+                  Compliance & Risk Analysis
+                </p>
+              </div>
+
+            </div>
+
+            <button
+              class="mt-10 px-8 py-4 border border-red-500 text-white hover:bg-red-600 rounded-xl font-semibold transition-all duration-300"
+            >
+              Request Evaluation
+            </button>
+
           </div>
-          <div class="group bg-surface-container border border-white/10 p-lg hover:border-primary-container transition-all duration-300 industrial-shadow fade-in-on-scroll hover:shadow-lg" style="animation-delay: 0.3s">
-            <BarChart3 class="w-9 h-9 text-primary-container mb-md transition-transform group-hover:scale-110" />
-            <h4 class="font-headline-md text-white uppercase mb-sm">RATING</h4>
-            <p class="font-body-md text-on-secondary-container">Rigorous structural assessment and property valuation services.</p>
+
+          <!-- IMAGE -->
+          <div class="relative group">
+
+            <div
+              class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"
+            ></div>
+
+            <img
+              src="/finance-keys.png"
+              alt="Property Evaluation"
+              class="relative w-full h-[550px] object-cover rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02]"
+            />
+
           </div>
+
         </div>
       </section>
 
@@ -379,7 +415,7 @@ onUnmounted(() => {
       <!-- MAP SIMULATION -->
       <section class="h-64 bg-black grayscale contrast-125 brightness-50 flex items-center justify-center border-y border-white/5 fade-in-on-scroll">
         <div class="border-2 border-primary-container p-lg bg-black/80 backdrop-blur-md hover:scale-105 transition-transform">
-          <p class="font-label-caps text-white">CLADALE OPERATIONS AREA: KUMASI</p>
+          <p class="font-label-caps text-white">{{ brandName }} OPERATIONS AREA: KUMASI</p>
         </div>
       </section>
     </main>
@@ -387,8 +423,8 @@ onUnmounted(() => {
     <!-- FOOTER -->
     <footer class="bg-black text-primary-container font-data-mono text-xs flex flex-col md:flex-row justify-between items-center px-margin-desktop py-xl w-full border-t border-white/5">
       <div>
-        <span class="font-headline-md font-black text-on-surface uppercase">CLADALE.</span>
-        <p class="mt-xs text-on-secondary-container">© 2024 CLADALE INDUSTRIAL. ALL RIGHTS RESERVED.</p>
+        <span class="font-headline-md font-black text-on-surface uppercase">{{ brandName }}.</span>
+        <p class="mt-xs text-on-secondary-container">© 2024 {{ brandNameFull }}. ALL RIGHTS RESERVED.</p>
       </div>
       <div class="flex gap-lg mt-lg md:mt-0 uppercase tracking-widest text-[10px]">
         <a class="text-on-secondary-container hover:text-primary-container transition-colors" href="#">Privacy</a>
@@ -398,3 +434,147 @@ onUnmounted(() => {
     </footer>
   </div>
 </template>
+
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useWindowScroll } from '@vueuse/core'
+import {
+  Tag,
+  KeyRound,
+  CreditCard,
+  BarChart3,
+  ArrowLeft,
+  ArrowRight,
+  ArrowRight as ArrowForward,
+  MapPin,
+  Mail,
+} from '@lucide/vue'
+
+// Brand configuration
+const brandName = 'CLADEL'
+const brandNameFull = 'CLADEL CONSTRUCTION'
+const brandNameLong = 'Cladel Construction'
+
+// Nav scroll behavior
+const { y: scrollY } = useWindowScroll()
+
+const hero = ref<HTMLElement | null>(null)
+const currentX = ref(0)
+const currentY = ref(50)
+const targetX = ref(0)
+const targetY = ref(50)
+const animationFrame = ref<number | null>(null)
+const slideIndex = ref(0)
+const slideInterval = ref<number | null>(null)
+const observerRef = ref<IntersectionObserver | null>(null)
+const slides = [
+  '/house 1.jpeg',
+  '/ialicante-mediterranean-homes-475777-unsplash.jpg.jpeg'
+]
+
+// Services sections (Selling & Renting) — simplified static sections (no carousel)
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+const animateScene = () => {
+  currentX.value += (targetX.value - currentX.value) * 0.08
+  currentY.value += (targetY.value - currentY.value) * 0.08
+
+  if (Math.abs(targetX.value - currentX.value) > 0.15 || Math.abs(targetY.value - currentY.value) > 0.15) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  } else {
+    currentX.value = targetX.value
+    currentY.value = targetY.value
+    animationFrame.value = null
+  }
+}
+
+const setPointer = (clientX: number, clientY: number) => {
+  if (!hero.value) return
+  const rect = hero.value.getBoundingClientRect()
+  targetX.value = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100)
+  targetY.value = clamp(((clientY - rect.top) / rect.height) * 100, 0, 100)
+  if (animationFrame.value === null) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  }
+}
+
+const handlePointerMove = (event: MouseEvent) => {
+  setPointer(event.clientX, event.clientY)
+}
+
+const handlePointerLeave = () => {
+  targetX.value = 0
+  targetY.value = 50
+  if (animationFrame.value === null) {
+    animationFrame.value = window.requestAnimationFrame(animateScene)
+  }
+}
+
+const sceneStyle = computed(() => ({
+  transform: `perspective(1400px) rotateY(${(currentX.value - 50) * 0.11}deg) rotateX(${(50 - currentY.value) * 0.07}deg)`,
+}))
+
+const heroBackgroundStyle = computed(() => ({
+  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.42) 25%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.88) 100%), url(${slides[slideIndex.value]})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundColor: '#0b0b0b',
+  filter: 'brightness(0.64) contrast(1.08)',
+  transition: 'background-image 1s ease-in-out, filter 1s ease-in-out',
+}))
+
+const beforeMaskStyle = computed(() => ({
+  clipPath: `polygon(0 0, ${currentX.value}% 0, ${currentX.value}% 100%, 0 100%)`,
+}))
+
+const revealStyle = computed(() => ({
+  left: `${currentX.value}%`,
+  transform: 'translateX(-50%)',
+}))
+
+const startSlideShow = () => {
+  if (slideInterval.value !== null) return
+  slideInterval.value = window.setInterval(() => {
+    slideIndex.value = (slideIndex.value + 1) % slides.length
+  }, 6500)
+}
+
+const stopSlideShow = () => {
+  if (slideInterval.value !== null) {
+    window.clearInterval(slideInterval.value)
+    slideInterval.value = null
+  }
+}
+
+onMounted(() => {
+  startSlideShow()
+
+  // basic scroll reveal observer for `.fade-in-on-scroll` elements
+  observerRef.value = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const el = entry.target as HTMLElement
+      if (entry.isIntersecting) {
+        el.classList.add('in-view')
+      } else {
+        el.classList.remove('in-view')
+      }
+    })
+  }, { threshold: 0.12 })
+
+  document.querySelectorAll('.fade-in-on-scroll').forEach((el) => {
+    observerRef.value?.observe(el)
+  })
+  // services carousel removed
+})
+
+onUnmounted(() => {
+  if (animationFrame.value !== null) {
+    window.cancelAnimationFrame(animationFrame.value)
+  }
+  stopSlideShow()
+  if (observerRef.value) observerRef.value.disconnect()
+})
+</script>
