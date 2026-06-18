@@ -440,10 +440,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
 import {
-  Tag,
-  KeyRound,
-  CreditCard,
-  BarChart3,
   ArrowLeft,
   ArrowRight,
   ArrowRight as ArrowForward,
