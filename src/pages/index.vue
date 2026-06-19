@@ -28,7 +28,7 @@
         @mousemove="handlePointerMove"
         @mouseenter="stopSlideShow"
         @mouseleave="() => { handlePointerLeave(); startSlideShow() }"
-        class="relative min-h-[110vh] pt-[90px] pb-lg flex flex-col items-center justify-start overflow-hidden px-margin-desktop text-center bg-black"
+        class="relative min-h-[70vh] pt-[90px] pb-lg flex flex-col items-center justify-start overflow-hidden px-margin-desktop text-center bg-black"
       >
         <div class="absolute inset-0 z-0" :style="heroBackgroundStyle"></div>
         <!-- Hero Content -->
@@ -41,7 +41,7 @@
           </h5>
         </div>
 
-        <div class="w-full max-w-2xl relative z-20 mb-lg fade-in-on-scroll">
+        <!-- <div class="w-full max-w-2xl relative z-20 mb-lg fade-in-on-scroll">
             <div
               class="relative overflow-hidden rounded-[32px] aspect-[1.9/1]"
               :style="sceneStyle"
@@ -71,7 +71,7 @@
                 <div class="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500/55 shadow-[0_0_20px_rgba(214,40,40,0.55)]" />
               </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="w-full max-w-4xl mx-auto mb-10 px-4 py-3 rounded-full bg-surface-container/80 border border-white/10 text-white/80 text-sm tracking-[0.2em] uppercase shadow-lg backdrop-blur-xl">
           <span class="font-label-caps text-primary-container mr-2">Location: </span>
@@ -113,205 +113,123 @@
       </section>
 
   
-      <!-- SERVICES -->
-      <section
-        id="services"
-        class="relative py-32 px-6 lg:px-16 bg-black"
-      >
+       <!-- SERVICES SECTION -->
+      <section id="services" class="border-t border-white/10 p-20 bg-transparent">      
         <!-- SECTION HEADER -->
-        <div class="max-w-7xl mx-auto mb-24">
-
-          <p
-            class="text-red-500 uppercase tracking-[0.3em] text-sm font-semibold mb-4"
-          >
+        <div class="mb-24">
+          <p class="text-red-500 uppercase tracking-[0.3em] text-sm font-semibold mb-4">
             OUR EXPERTISE
           </p>
 
-          <h2
-            class="font-headline-xl text-[clamp(2.75rem,6vw,4.5rem)] font-black uppercase text-white leading-tight"
-          >
-            Integrated
-            <span class="text-red-500">
-              Property Solutions
-            </span>
+          <h2 class="font-headline-sm text-[clamp(2rem,4vw,3rem)] text-white mb-6 uppercase leading-tight tracking-tighter animate-fade-in-up">
+            Integrated <span class="text-red-500">Property Solutions</span>
           </h2>
 
-          <p
-            class="mt-6 max-w-3xl text-lg text-gray-400 leading-relaxed"
-          >
-            From financing and investment guidance to
-            independent property evaluation, we provide
-            the expertise needed to make confident
-            real-estate decisions.
+          <p class="mt-6 max-w-3xl text-lg text-gray-400 leading-relaxed">
+            From financing and investment guidance to independent property evaluation, 
+            we provide the expertise needed to make confident real-estate decisions.
           </p>
-
         </div>
 
-        <!-- FINANCE -->
-        <div
-          id="finance"
-          class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center mb-40"
-        >
-
+        <!-- FINANCE SUB-SECTION -->
+        <div id="finance" class="grid lg:grid-cols-2 gap-16 items-center">
           <!-- IMAGE -->
           <div class="relative group">
-
-            <div
-              class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"
-            ></div>
-
-            <img
-              src="/finance-keys.png"
-              alt="Finance"
-              class="relative w-full h-[550px] object-cover rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02]"
+            <div class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"></div>
+            <img 
+              src="/finance-keys.png" 
+              alt="Finance keys representing property financing" 
+              class="relative w-full h-[550px] object-scale-down rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02] animate-slide-in-left" 
             />
-
           </div>
 
           <!-- CONTENT -->
           <div>
-
-            <span
-              class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold"
-            >
+            <span class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold">
               FINANCIAL SERVICES
             </span>
 
-            <h3
-              class="mt-4 font-headline-lg text-[clamp(2rem,4vw,3.5rem)] font-black uppercase text-white leading-tight"
-            >
-              Financing Built
-              <br />
-              Around Your Vision
+            <h3 class="font-headline-sm text-[clamp(1rem,3vw,2rem)] text-white mb-6 uppercase leading-tight tracking-tighter animate-fade-in-up">
+              Financing Built <br /> Around Your Vision
             </h3>
 
-            <p
-              class="mt-8 text-lg text-gray-400 leading-relaxed"
-            >
-              Whether you're purchasing your first property,
-              expanding your investment portfolio, or funding
-              a large-scale development, we help structure
-              financing solutions that support long-term
-              success.
+            <p class="mt-8 text-lg text-gray-400 leading-relaxed">
+              Whether you're purchasing your first property, expanding your investment portfolio, 
+              or funding a large-scale development, we help structure financing solutions that 
+              support long-term success.
             </p>
 
             <div class="mt-10 space-y-6">
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">01</span>
-                <p class="text-gray-300">
-                  Flexible Funding Structures
-                </p>
+                <p class="text-gray-300">Flexible Funding Structures</p>
               </div>
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">02</span>
-                <p class="text-gray-300">
-                  Access To Trusted Financial Partners
-                </p>
+                <p class="text-gray-300">Access To Trusted Financial Partners</p>
               </div>
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">03</span>
-                <p class="text-gray-300">
-                  Guidance From Application To Approval
-                </p>
+                <p class="text-gray-300">Guidance From Application To Approval</p>
               </div>
-
             </div>
 
-            <button
-              class="mt-10 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all duration-300"
-            >
+            <button type="button" class="mt-10 px-8 py-4 bg-red-600 hover:bg-red-700 rounded-xl font-semibold transition-all duration-300">
               Explore Financing
             </button>
-
           </div>
         </div>
 
-        <!-- RATING -->
-        <div
-          id="rating"
-          class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center"
-        >
-
+        <!-- RATING / EVALUATION SUB-SECTION -->
+        <div id="rating" class="grid lg:grid-cols-2 gap-16 items-center"> 
           <!-- CONTENT -->
           <div>
-
-            <span
-              class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold"
-            >
+            <span class="text-red-500 uppercase tracking-[0.25em] text-sm font-semibold">
               PROPERTY EVALUATION
             </span>
 
-            <h3
-              class="mt-4 font-headline-lg text-[clamp(2rem,4vw,3.5rem)] font-black uppercase text-white leading-tight"
-            >
-              Independent
-              <br />
-              Assessments You Can Trust
+            <h3 class="font-headline-sm text-[clamp(1rem,3vw,2rem)] text-white mb-6 uppercase leading-tight tracking-tighter animate-fade-in-up">
+              Independent <br /> Assessments You Can Trust
             </h3>
 
-            <p
-              class="mt-8 text-lg text-gray-400 leading-relaxed"
-            >
-              Our evaluation services provide clear insights
-              into property value, structural integrity, and
-              investment potential. We help buyers,
-              investors, and institutions make informed
+            <p class="mt-8 text-lg text-gray-400 leading-relaxed">
+              Our evaluation services provide clear insights into property value, structural integrity, 
+              and investment potential. We help buyers, investors, and institutions make informed 
               decisions with confidence.
             </p>
 
             <div class="mt-10 space-y-6">
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">01</span>
-                <p class="text-gray-300">
-                  Property Valuation Reports
-                </p>
+                <p class="text-gray-300">Property Valuation Reports</p>
               </div>
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">02</span>
-                <p class="text-gray-300">
-                  Structural Integrity Assessments
-                </p>
+                <p class="text-gray-300">Structural Integrity Assessments</p>
               </div>
-
               <div class="flex gap-5">
                 <span class="text-red-500 font-black">03</span>
-                <p class="text-gray-300">
-                  Compliance & Risk Analysis
-                </p>
+                <p class="text-gray-300">Compliance & Risk Analysis</p>
               </div>
-
             </div>
 
-            <button
-              class="mt-10 px-8 py-4 border border-red-500 text-white hover:bg-red-600 rounded-xl font-semibold transition-all duration-300"
-            >
+            <button type="button" class="mt-10 px-8 py-4 border border-red-500 text-white hover:bg-red-600 rounded-xl font-semibold transition-all duration-300">
               Request Evaluation
             </button>
-
           </div>
 
           <!-- IMAGE -->
           <div class="relative group">
-
-            <div
-              class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"
-            ></div>
-
-            <img
-              src="/finance-keys.png"
-              alt="Property Evaluation"
-              class="relative w-full h-[550px] object-cover rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02]"
+            <div class="absolute -inset-4 bg-red-600/10 blur-3xl rounded-full"></div>
+            <img 
+              src="/finance-keys.png" 
+              alt="Property evaluation and assessment" 
+              class="relative w-full h-[550px] object-scale-down rounded-3xl shadow-2xl transition duration-700 group-hover:scale-[1.02]" 
             />
-
           </div>
-
         </div>
       </section>
+
 
       <!-- PROJECTS -->
       <section class="py-xl px-margin-desktop bg-black fade-in-on-scroll" id="offers">
@@ -326,48 +244,151 @@
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        
+        <!-- Flex container with items-start prevents other cards from stretching when one grows in height -->
+        <div class="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
+          
           <!-- Project Card 1 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-left hover:shadow-2xl" style="animation-delay: 0s">
-            <div class="aspect-video relative overflow-hidden">
-              <img alt="Modern Residential" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLsPPg5V49h1rfbslsI6xFUvG816f5zNP0zJfR2xujzoKRO1u0gSQIyrnSOByIspEyVcSD9xuFhUUQTTOVdr_xcmka2Yi8YMh5EFxBXNQVqjYtwsQtchGGCU3PhyAxdrEIl6IlR57gPP_W2SF2uxVdhz4ir7hYUUJh21l1FICcfnQ24Kx0gD8KwXPa_BijcsDSi8kKcMQ5gC-GxeXufBCZUGtT1BnsWlwFgzFI8UiQjwZ_E6YLtLjGgeLdc"/>
-              <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
+          <article class="group flex-1 transition-all duration-700 ease-in-out md:hover:flex-[3] relative overflow-hidden bg-surface-container border border-white/5 hover:shadow-2xl flex flex-col md:flex-row rounded-lg fade-in-on-scroll slide-in-left" style="animation-delay: 0s">
+            
+            <!-- LEFT PART: Original Card Content (Maintains original height) -->
+            <div class="w-full md:group-hover:w-[35%] transition-all duration-700 flex-shrink-0 flex flex-col overflow-hidden">
+              <div class="aspect-video relative overflow-hidden">
+                <img alt="Modern Residential" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/beautiful-home-2826052_1920.jpg.jpeg"/>
+                <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
+              </div>
+              <div class="p-md flex-1 flex flex-col">
+                <h4 class="font-headline-md text-white mb-xs uppercase">RESIDENTIAL ALPHA</h4>
+                <p class="font-data-mono text-xs text-secondary mb-md">KUMASI, GHANA | 2023</p>
+                
+                <!-- Original SEE EXPOSÈ link (collapses on desktop hover) -->
+                <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white md:group-hover:opacity-0 md:group-hover:max-h-0 overflow-hidden" href="#">
+                  SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                </a>
+              </div>
             </div>
-            <div class="p-md">
-              <h4 class="font-headline-md text-white mb-xs uppercase">RESIDENTIAL ALPHA</h4>
-              <p class="font-data-mono text-xs text-secondary mb-md">KUMASI, GHANA | 2023</p>
-              <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white" href="#">
-                SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
-              </a>
+
+            <!-- RIGHT PART: Expanded Content (Starts at 0 height, grows on hover) -->
+            <div class="flex-1 overflow-hidden">
+              <div class="max-w-0 max-h-0 md:group-hover:max-w-[1000px] md:group-hover:max-h-[800px] opacity-0 md:group-hover:opacity-100 overflow-hidden transition-all duration-700 delay-200">
+                <div class="p-md flex flex-col justify-between border-l border-white/10 min-w-[300px] h-full">
+                  <div>
+                    <h5 class="text-white text-lg font-bold mb-2 uppercase">Project Overview</h5>
+                    <p class="text-secondary text-sm mb-4 leading-relaxed">
+                      A modern residential complex featuring sustainable design, smart home integration, and premium amenities tailored for modern living.
+                    </p>
+                    <!-- Extra Photo -->
+                    <div class="aspect-video rounded-lg overflow-hidden mb-4 shadow-lg">
+                      <img src="/beautiful-home-2826052_1920.jpg.jpeg" class="w-full h-full object-cover" alt="Detail view" />
+                    </div>
+                    <!-- Details Grid -->
+                    <div class="grid grid-cols-2 gap-3 text-xs text-secondary">
+                      <div><span class="text-white font-bold">Area:</span> 450 sqm</div>
+                      <div><span class="text-white font-bold">Beds:</span> 4</div>
+                      <div><span class="text-white font-bold">Baths:</span> 3</div>
+                      <div><span class="text-white font-bold">Status:</span> Completed</div>
+                    </div>
+                  </div>
+                  <!-- SEE EXPOSÈ moved to the bottom -->
+                  <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white mt-6 font-semibold" href="#">
+                    SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
             </div>
+
           </article>
+
           <!-- Project Card 2 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-right hover:shadow-2xl" style="animation-delay: 0.1s">
-            <div class="aspect-video relative overflow-hidden">
-              <img alt="Luxury Estate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLubstAXz8ugVAGDauRrgRWzW4zht5L2cibYsHH57P_KPW9gUYrOvE99R9p9mEIGmNXcGfoXlk3SN0LWbD9xqIB5IkiLk8mfITGSth6bYJU3EGUc4dRIIvnTjBMadGuyU2Kp9jYEN0W9OChBooynn386ye8HMigouUl_SWsb4dJSEJwrclvy3v0e_iZaq0kM0C1VVJr99QPVHK7SHuGuy4XD3Xhn06Yy9fBou3M597fyUBAslY_ErEN9Ot1R"/>
-              <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">LEASED</div>
+          <article class="group flex-1 transition-all duration-700 ease-in-out md:hover:flex-[3] relative overflow-hidden bg-surface-container border border-white/5 hover:shadow-2xl flex flex-col md:flex-row rounded-lg fade-in-on-scroll slide-in-right" style="animation-delay: 0.1s">
+            
+            <!-- LEFT PART -->
+            <div class="w-full md:group-hover:w-[35%] transition-all duration-700 flex-shrink-0 flex flex-col overflow-hidden">
+              <div class="aspect-video relative overflow-hidden">
+                <img alt="Luxury Estate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/house_1.jpeg"/>
+                <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">LEASED</div>
+              </div>
+              <div class="p-md flex-1 flex flex-col">
+                <h4 class="font-headline-md text-white mb-xs uppercase">ESTATE DELTA</h4>
+                <p class="font-data-mono text-xs text-secondary mb-md">ACCRA, GHANA | 2024</p>
+                <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white md:group-hover:opacity-0 md:group-hover:max-h-0 overflow-hidden" href="#">
+                  SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                </a>
+              </div>
             </div>
-            <div class="p-md">
-              <h4 class="font-headline-md text-white mb-xs uppercase">ESTATE DELTA</h4>
-              <p class="font-data-mono text-xs text-secondary mb-md">ACCRA, GHANA | 2024</p>
-              <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white" href="#">
-                SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
-              </a>
+
+            <!-- RIGHT PART -->
+            <div class="flex-1 overflow-hidden">
+              <div class="max-w-0 max-h-0 md:group-hover:max-w-[1000px] md:group-hover:max-h-[800px] opacity-0 md:group-hover:opacity-100 overflow-hidden transition-all duration-700 delay-200">
+                <div class="p-md flex flex-col justify-between border-l border-white/10 min-w-[300px] h-full">
+                  <div>
+                    <h5 class="text-white text-lg font-bold mb-2 uppercase">Project Overview</h5>
+                    <p class="text-secondary text-sm mb-4 leading-relaxed">
+                      An exclusive luxury estate offering panoramic views, high-end finishes, and unparalleled privacy in the heart of the city.
+                    </p>
+                    <div class="aspect-video rounded-lg overflow-hidden mb-4 shadow-lg">
+                      <img src="/house_1.jpeg" class="w-full h-full object-cover" alt="Detail view" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs text-secondary">
+                      <div><span class="text-white font-bold">Area:</span> 800 sqm</div>
+                      <div><span class="text-white font-bold">Beds:</span> 6</div>
+                      <div><span class="text-white font-bold">Baths:</span> 5</div>
+                      <div><span class="text-white font-bold">Status:</span> Leased</div>
+                    </div>
+                  </div>
+                  <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white mt-6 font-semibold" href="#">
+                    SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
             </div>
+
           </article>
+
           <!-- Project Card 3 -->
-          <article class="group bg-surface-container border border-white/5 overflow-hidden fade-in-on-scroll slide-in-left hover:shadow-2xl" style="animation-delay: 0.2s">
-            <div class="aspect-video relative overflow-hidden">
-              <img alt="Coastal Villa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLuzbEcJa_qZHQnoUuuVcmZ9UCxxhCwe53y4QG6XNnHePzSsif33KFG9wXIlUvQvVVsh5eeJFGWaK_k4o3zI7_SFOxMil75SjU2JYvVms_SSbQUs9QXqtYVPPSEZwDrQpIVL4Gyh0Jo0usUCaMkBQt75KF9DHZvtA9mt-WhabsV7a2U8M2ne8EbcYzuaMnVyh-Y890LyH5T07OKf2ZWcIrp3Qluvh31UIkKBz9Y_nuAdgWN31JAQ1ANjDFw"/>
-              <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
+          <article class="group flex-1 transition-all duration-700 ease-in-out md:hover:flex-[3] relative overflow-hidden bg-surface-container border border-white/5 hover:shadow-2xl flex flex-col md:flex-row rounded-lg fade-in-on-scroll slide-in-left" style="animation-delay: 0.2s">
+            
+            <!-- LEFT PART -->
+            <div class="w-full md:group-hover:w-[35%] transition-all duration-700 flex-shrink-0 flex flex-col overflow-hidden">
+              <div class="aspect-video relative overflow-hidden">
+                <img alt="Coastal Villa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="/ialicante-mediterranean-homes-475777-unsplash.jpg.jpeg"/>
+                <div class="absolute top-0 right-0 bg-primary-container px-sm py-xs font-label-caps text-[10px] text-white">FOR SALE</div>
+              </div>
+              <div class="p-md flex-1 flex flex-col">
+                <h4 class="font-headline-md text-white mb-xs uppercase">VILLA SIGMA</h4>
+                <p class="font-data-mono text-xs text-secondary mb-md">CAPE COAST | 2023</p>
+                <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white md:group-hover:opacity-0 md:group-hover:max-h-0 overflow-hidden" href="#">
+                  SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                </a>
+              </div>
             </div>
-            <div class="p-md">
-              <h4 class="font-headline-md text-white mb-xs uppercase">VILLA SIGMA</h4>
-              <p class="font-data-mono text-xs text-secondary mb-md">CAPE COAST | 2023</p>
-              <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white" href="#">
-                SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
-              </a>
+
+            <!-- RIGHT PART -->
+            <div class="flex-1 overflow-hidden">
+              <div class="max-w-0 max-h-0 md:group-hover:max-w-[1000px] md:group-hover:max-h-[800px] opacity-0 md:group-hover:opacity-100 overflow-hidden transition-all duration-700 delay-200">
+                <div class="p-md flex flex-col justify-between border-l border-white/10 min-w-[300px] h-full">
+                  <div>
+                    <h5 class="text-white text-lg font-bold mb-2 uppercase">Project Overview</h5>
+                    <p class="text-secondary text-sm mb-4 leading-relaxed">
+                      A stunning coastal villa blending modern architecture with natural surroundings, featuring private beach access and infinity pools.
+                    </p>
+                    <div class="aspect-video rounded-lg overflow-hidden mb-4 shadow-lg">
+                      <img src="/ialicante-mediterranean-homes-475777-unsplash.jpg.jpeg" class="w-full h-full object-cover" alt="Detail view" />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs text-secondary">
+                      <div><span class="text-white font-bold">Area:</span> 600 sqm</div>
+                      <div><span class="text-white font-bold">Beds:</span> 5</div>
+                      <div><span class="text-white font-bold">Baths:</span> 4</div>
+                      <div><span class="text-white font-bold">Status:</span> Available</div>
+                    </div>
+                  </div>
+                  <a class="flex items-center gap-xs font-label-caps text-primary-container hover:gap-md transition-all hover:text-white mt-6 font-semibold" href="#">
+                    SEE EXPOSÈ <ArrowForward class="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
             </div>
+
           </article>
         </div>
       </section>
@@ -508,10 +529,6 @@ const handlePointerLeave = () => {
   }
 }
 
-const sceneStyle = computed(() => ({
-  transform: `perspective(1400px) rotateY(${(currentX.value - 50) * 0.11}deg) rotateX(${(50 - currentY.value) * 0.07}deg)`,
-}))
-
 const heroBackgroundStyle = computed(() => ({
   backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.42) 25%, rgba(0,0,0,0.72) 70%, rgba(0,0,0,0.88) 100%), url(${slides[slideIndex.value]})`,
   backgroundSize: 'cover',
@@ -520,15 +537,6 @@ const heroBackgroundStyle = computed(() => ({
   backgroundColor: '#0b0b0b',
   filter: 'brightness(0.64) contrast(1.08)',
   transition: 'background-image 1s ease-in-out, filter 1s ease-in-out',
-}))
-
-const beforeMaskStyle = computed(() => ({
-  clipPath: `polygon(0 0, ${currentX.value}% 0, ${currentX.value}% 100%, 0 100%)`,
-}))
-
-const revealStyle = computed(() => ({
-  left: `${currentX.value}%`,
-  transform: 'translateX(-50%)',
 }))
 
 const startSlideShow = () => {
